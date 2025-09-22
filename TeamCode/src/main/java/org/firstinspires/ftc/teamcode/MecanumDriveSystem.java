@@ -14,10 +14,10 @@ public class MecanumDriveSystem  extends OpMode {
     @Override
     public void init() {
         // The deviceName needs to be changed to how it in driver station config thingy
-        FLeft = hardwareMap.get(DcMotor.class, "motor1");
-        FRight = hardwareMap.get(DcMotor.class, "motor2");
-        BLeft = hardwareMap.get(DcMotor.class, "motor3");
-        BRight = hardwareMap.get(DcMotor.class, "motor4");
+        FLeft = hardwareMap.get(DcMotor.class, "Motor0");
+        FRight = hardwareMap.get(DcMotor.class, "Motor1");
+        BLeft = hardwareMap.get(DcMotor.class, "Motor2");
+        BRight = hardwareMap.get(DcMotor.class, "Motor3");
 
         //Inverting motors as they are opposite
         FLeft.setDirection(DcMotor.Direction.REVERSE);
