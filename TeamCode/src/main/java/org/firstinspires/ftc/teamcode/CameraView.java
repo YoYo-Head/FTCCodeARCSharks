@@ -27,6 +27,15 @@ public class CameraView extends LinearOpMode {
             while (opModeIsActive()) {
                 // This part of code keep running till the OpMode isn't active
 
+                // Saves CPU resources if not needed (saw this from recommendations)
+                if (gamepad1.dpad_down) {
+                    vision.stopStreaming()
+
+                } else if (gamepad1.dpad_up) {
+                    vision.resumeStreaming()
+
+                }
+
                 // Share the CPU.
                 sleep(20);
             }
