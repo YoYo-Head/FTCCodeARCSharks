@@ -29,10 +29,10 @@ public class CameraView extends LinearOpMode {
 
                 // Saves CPU resources if not needed (saw this from recommendations)
                 if (gamepad1.dpad_down) {
-                    vision.stopStreaming()
+                    vision.stopStreaming();
 
                 } else if (gamepad1.dpad_up) {
-                    vision.resumeStreaming()
+                    vision.resumeStreaming();
 
                 }
 
