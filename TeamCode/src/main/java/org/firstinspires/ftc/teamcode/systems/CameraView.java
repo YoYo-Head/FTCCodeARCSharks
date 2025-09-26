@@ -6,6 +6,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+import java.util.stream.Collectors;
+
 @TeleOp(name="Camera", group="Camera System")
 public class CameraView extends LinearOpMode {
     // Creating the camera
@@ -19,12 +21,24 @@ public class CameraView extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        // Activates function which defines and starts camera
         initScanner();
+        // Activates function which defines and starts camera
+
+        waitForStart();
 
         if (opModeIsActive()) {
-            telemetry.addLine("Camera stream starting...");
             while (opModeIsActive()) {
+
+                if (aprilTag.getDetections() != null && !aprilTag.getDetections().isEmpty()) {
+                    telemetry.addData("Tag IDs", aprilTag.getDetections().stream()
+                            .map(d -> d.getClass())
+                            .collect(Collectors.toList()).toString());
+                } else {
+                    telemetry.addLine("No tags detected");
+                }
+                telemetry.update();
+
+
                 // This part of code keep running till the OpMode isn't active
 
                 // Saves CPU resources if not needed (saw this from recommendations)
@@ -40,8 +54,7 @@ public class CameraView extends LinearOpMode {
                 sleep(20);
             }
         }
-        // Stops the stream
-        vision.close();
+
     }
 
     public void initScanner() {
@@ -54,10 +67,12 @@ public class CameraView extends LinearOpMode {
         vision = new VisionPortal.Builder()
                 .setCamera(camera)
                 .addProcessor(aprilTag)
+                .enableLiveView(true)
                 .build();
 
-        // Sets active camera (idk if useless so might remove later)
-        vision.setActiveCamera(camera);
+        vision.resumeStreaming();
+        telemetry.addLine("Camera stream starting...");
+        telemetry.update();
 
     }
 
