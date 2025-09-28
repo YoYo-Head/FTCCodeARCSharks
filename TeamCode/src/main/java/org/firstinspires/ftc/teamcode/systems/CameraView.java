@@ -8,7 +8,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.stream.Collectors;
 
-@TeleOp(name="Camera", group="Camera System")
+@TeleOp(name="Camera")
 public class CameraView extends LinearOpMode {
     // Creating the camera
     WebcamName camera;
@@ -31,7 +31,7 @@ public class CameraView extends LinearOpMode {
 
                 if (aprilTag.getDetections() != null && !aprilTag.getDetections().isEmpty()) {
                     telemetry.addData("Tag IDs", aprilTag.getDetections().stream()
-                            .map(d -> d.getClass())
+                            .map(d -> d.getID())
                             .collect(Collectors.toList()).toString());
                 } else {
                     telemetry.addLine("No tags detected");
