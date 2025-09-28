@@ -31,7 +31,7 @@ public class CameraView extends LinearOpMode {
 
                 if (aprilTag.getDetections() != null && !aprilTag.getDetections().isEmpty()) {
                     telemetry.addData("Tag IDs", aprilTag.getDetections().stream()
-                            .map(d -> d.getID())
+                            .map(d -> d.id)
                             .collect(Collectors.toList()).toString());
                 } else {
                     telemetry.addLine("No tags detected");
