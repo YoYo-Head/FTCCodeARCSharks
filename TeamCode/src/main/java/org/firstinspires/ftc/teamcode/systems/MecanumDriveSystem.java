@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name="Mecanum Drive System", group="Drive System")
-public class MecanumDriveSystem  extends OpMode {
+public class MecanumDriveSystem extends OpMode {
     // Creating the variable for the DcMotors
     DcMotor FLeft;
     DcMotor FRight;

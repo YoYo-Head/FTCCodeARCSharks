@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.systems;
 
-import static java.lang.Thread.sleep;
-
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -19,7 +17,7 @@ public class ShooterSystem extends OpMode {
 
 
     // The intake speed power percentage
-    int pwrPercentage = 10;
+    int pwrPercentage = 100;
     double power = (double) pwrPercentage / 100;
 
     @Override
@@ -48,6 +46,13 @@ public class ShooterSystem extends OpMode {
 
         if (LOAbutton) {
             IM2.setPower(power);
+            while (timer1.seconds() <= 1) {
+                telemetry.addLine("loading...");
+                telemetry.update();
+
+            }
+            telemetry.addData("Loader", "The loader has completed all steps!");
+            telemetry.update();
 
         }
         else {
@@ -55,14 +60,6 @@ public class ShooterSystem extends OpMode {
 
         }
 
-        timer1.startTime();
-
-        while (timer1.seconds() <= 1) {
-            // Just waiting...
-
-
-        }
-        telemetry.addData("Loader", "The loader has completed all steps!");
 
 
     }
@@ -73,19 +70,16 @@ public class ShooterSystem extends OpMode {
 
         if (SHObutton) {
             SM.setPower(1);
+            while (timer2.seconds() <= 1) {
+                telemetry.addLine("loading...");
+                telemetry.update();
+
+            }
+            telemetry.addData("Shooter", "The shooter has completed all steps!");
         }
         else {
             SM.setPower(0);
         }
-
-        timer2.startTime();
-
-        while (timer2.seconds() <= 1) {
-            // Also just waiting...
-
-        }
-        telemetry.addData("Shooter", "The shooter has completed all steps!");
-
 
     }
 
