@@ -43,6 +43,7 @@ public class ShooterSystem extends OpMode {
     // Defining the function of the loader
     public void loader(boolean LOAbutton) {
         timer1.reset();
+        timer1.startTime();
 
         if (LOAbutton) {
             IM2.setPower(power);
@@ -60,13 +61,12 @@ public class ShooterSystem extends OpMode {
 
         }
 
-
-
     }
 
     // Defining the function of the shooter
     public void shooter(boolean SHObutton) {
         timer2.reset();
+        timer2.startTime();
 
         if (SHObutton) {
             SM.setPower(1);
@@ -76,6 +76,7 @@ public class ShooterSystem extends OpMode {
 
             }
             telemetry.addData("Shooter", "The shooter has completed all steps!");
+            telemetry.update();
         }
         else {
             SM.setPower(0);
