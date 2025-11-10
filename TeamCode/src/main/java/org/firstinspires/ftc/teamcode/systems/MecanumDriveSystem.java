@@ -21,8 +21,11 @@ public class MecanumDriveSystem extends OpMode {
         BRight = hardwareMap.get(DcMotor.class, "Motor3");
 
         //Inverting motors as they are opposite
-        FLeft.setDirection(DcMotor.Direction.REVERSE);
-        BLeft.setDirection(DcMotor.Direction.REVERSE);
+
+        BRight.setDirection(DcMotor.Direction.REVERSE);
+
+
+
 
     }
 
@@ -30,11 +33,11 @@ public class MecanumDriveSystem extends OpMode {
     public void loop() {
         telemetry.addLine("Driving is now enabled /w Mecanum Drive");
         // The actual driving part. drive is a function, as seen in the other part below this function
-        drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+        drive(gamepad1.left_stick_y, gamepad1.left_stick_x * -1, gamepad1.right_stick_x * -1);
 
     }
 
-    public void drive(double thrust, double strafe, double turn) {
+    public void drive(double thrust, double turn, double strafe) {
         // This is the motor power formula for each driving motor
         double FLeftPower = thrust + strafe + turn;
         double FRightPower = thrust - strafe - turn;
