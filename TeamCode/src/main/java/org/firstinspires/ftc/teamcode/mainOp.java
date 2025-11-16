@@ -55,7 +55,7 @@ public class mainOp extends LinearOpMode {
                 telemetry.update();
 
                 loader(gamepad1.x);
-                shooter(gamepad1.x);
+                shooter(gamepad1.a);
 
                 streamSwitch(gamepad1.dpad_up, gamepad1.dpad_down);
 
@@ -138,6 +138,8 @@ public class mainOp extends LinearOpMode {
                 telemetry.addLine("loading...");
                 telemetry.update();
 
+                drive(gamepad1.left_stick_y, gamepad1.left_stick_x * -1, gamepad1.right_stick_x * -1);
+
             }
             telemetry.addData("Loader", "The loader has completed all steps!");
             telemetry.update();
@@ -159,6 +161,8 @@ public class mainOp extends LinearOpMode {
             while (timer2.seconds() <= 1) {
                 telemetry.addLine("loading...");
                 telemetry.update();
+
+                drive(gamepad1.left_stick_y, gamepad1.left_stick_x * -1, gamepad1.right_stick_x * -1);
 
             }
             telemetry.addData("Shooter", "The shooter has completed all steps!");
