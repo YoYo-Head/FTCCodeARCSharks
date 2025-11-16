@@ -42,13 +42,7 @@ public class CameraView extends LinearOpMode {
                 // This part of code keep running till the OpMode isn't active
 
                 // Saves CPU resources if not needed (saw this from recommendations)
-                if (gamepad1.dpad_down) {
-                    vision.stopStreaming();
-
-                } else if (gamepad1.dpad_up) {
-                    vision.resumeStreaming();
-
-                }
+                streamSwitch(gamepad1.dpad_up, gamepad1.dpad_down);
 
                 // Share the CPU.
                 sleep(20);
@@ -73,6 +67,14 @@ public class CameraView extends LinearOpMode {
         vision.resumeStreaming();
         telemetry.addLine("Camera stream starting...");
         telemetry.update();
+
+    }
+    public void streamSwitch(boolean enable, boolean disable) {
+        if (enable) {
+            vision.resumeStreaming();
+        } else if (disable) {
+            vision.stopStreaming();
+        }
 
     }
 

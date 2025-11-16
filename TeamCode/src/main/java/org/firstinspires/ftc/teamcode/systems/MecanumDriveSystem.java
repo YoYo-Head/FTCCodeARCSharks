@@ -7,10 +7,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp(name="Mecanum Drive System", group="Drive System")
 public class MecanumDriveSystem extends OpMode {
     // Creating the variable for the DcMotors
-    DcMotor FLeft;
-    DcMotor FRight;
-    DcMotor BLeft;
-    DcMotor BRight;
+    static DcMotor FLeft;
+    static DcMotor FRight;
+    static DcMotor BLeft;
+    static DcMotor BRight;
 
     @Override
     public void init() {
@@ -37,7 +37,7 @@ public class MecanumDriveSystem extends OpMode {
 
     }
 
-    public void drive(double thrust, double turn, double strafe) {
+    public static void drive(double thrust, double turn, double strafe) {
         // This is the motor power formula for each driving motor
         double FLeftPower = thrust + strafe + turn;
         double FRightPower = thrust - strafe - turn;
