@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.systems;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -14,11 +13,13 @@ public class ShooterSystem extends OpMode {
 
     ElapsedTime timer1 = new ElapsedTime();
     ElapsedTime timer2 = new ElapsedTime();
+    ElapsedTime timer3 = new ElapsedTime();
+
 
 
     // The intake speed power percentage
-    int pwrPercentage = 100;
-    double power = (double) pwrPercentage / 100;
+    int pwrPercentage = 100; // For shooting power
+    double SHOpower = (double) pwrPercentage / 100;
 
     @Override
     public void init() {
@@ -28,7 +29,7 @@ public class ShooterSystem extends OpMode {
         IM2 = hardwareMap.get(DcMotor.class, "IntakeMotor2");
 
         // Intake Motor 1 is always going to be on
-        IM1.setPower(power);
+        IM1.setPower(1);
 
     }
 
@@ -36,7 +37,8 @@ public class ShooterSystem extends OpMode {
     public void loop() {
         // If using this OpMode, this is where the inputs will be taken
         loader(gamepad1.a);
-        shooter(gamepad1.x);
+        shooter(gamepad1.x, gamepad1.y, gamepad1.b, gamepad1.right_bumper);
+        SHPower(gamepad1.dpad_left, gamepad1.dpad_right);
 
     }
 
@@ -46,7 +48,7 @@ public class ShooterSystem extends OpMode {
         timer1.startTime();
 
         if (LOAbutton) {
-            IM2.setPower(power);
+            IM2.setPower(1);
             while (timer1.seconds() <= 1) {
                 telemetry.addLine("loading...");
                 telemetry.update();
@@ -64,25 +66,58 @@ public class ShooterSystem extends OpMode {
     }
 
     // Defining the function of the shooter
-    public void shooter(boolean SHObutton) {
+    public void shooter(boolean SHObutton, boolean SHObutton30, boolean SHObutton50, boolean SHObutton70) {
         timer2.reset();
         timer2.startTime();
 
         if (SHObutton) {
-            SM.setPower(1);
-            while (timer2.seconds() <= 1) {
-                telemetry.addLine("loading...");
-                telemetry.update();
-
-            }
-            telemetry.addData("Shooter", "The shooter has completed all steps!");
-            telemetry.update();
-        }
-        else {
+            SM.setPower(SHOpower);
+        } else if (SHObutton30) {
+            SM.setPower(0.3);
+        } else if (SHObutton50) {
+            SM.setPower(0.5);
+        } else if (SHObutton70) {
+            SM.setPower(0.7);
+        } else {
             SM.setPower(0);
         }
 
+        if (SHObutton || SHObutton30 || SHObutton50 || SHObutton70) {
+            while (timer2.seconds() <= 1) {
+                telemetry.addLine("loading...");
+                telemetry.update();
+            }
+            telemetry.addData("Shooter", "The shooter has completed all steps!");
+            telemetry.update();
+
+        }
     }
 
+    public void SHPower(boolean upshift, boolean downshift) {
+        // 5% upshift, 5% downshift
+        // Will stop at 100%
+        if (upshift && SHOpower < 1) {
+            SHOpower = SHOpower + 0.05;
+            telemetry.addData("Shooter System - SHPower", "Upshifted to " + (SHOpower * 100) + "%.");
+
+        } else if (upshift && SHOpower == 1) {
+            telemetry.addData("Shooter System - SHPower", "Warning! Power has already been set to max!");
+
+        } else if (downshift && SHOpower > 0.7) {
+            SHOpower = SHOpower - 0.05;
+            telemetry.addData("Shooter System - SHPower", "Downshifted to " + (SHOpower * 100) + "%.");
+
+        } else if (downshift && SHOpower == 0.7) {
+            telemetry.addData("Shooter System - SHPower", "Warning! Power has already been set to minimum!");
+
+        }
+
+        while (timer3.seconds() <= 0.5) {
+            telemetry.update();
+
+        }
+        telemetry.update();
+
+    }
 
 }
