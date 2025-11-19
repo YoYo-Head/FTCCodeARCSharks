@@ -15,6 +15,9 @@ public class ShooterSystem extends OpMode {
     ElapsedTime timer2 = new ElapsedTime();
     ElapsedTime timer3 = new ElapsedTime();
 
+    // Shifter Specific Variables
+    boolean shift = false;
+
 
 
     // The intake speed power percentage
@@ -96,26 +99,39 @@ public class ShooterSystem extends OpMode {
     public void SHPower(boolean upshift, boolean downshift) {
         // 5% upshift, 5% downshift
         // Will stop at 100%
+        String cap = "Shooter System - SHPower";
+        String mes = "n/a";
+
         if (upshift && SHOpower < 1) {
             SHOpower = SHOpower + 0.05;
-            telemetry.addData("Shooter System - SHPower", "Upshifted to " + (SHOpower * 100) + "%.");
+            mes = "Upshifted to " + (SHOpower * 100) + "%.";
+            shift = true;
 
         } else if (upshift && SHOpower == 1) {
-            telemetry.addData("Shooter System - SHPower", "Warning! Power has already been set to max!");
+            mes = "Warning! Power has already been set to max!";
 
         } else if (downshift && SHOpower > 0.7) {
             SHOpower = SHOpower - 0.05;
-            telemetry.addData("Shooter System - SHPower", "Downshifted to " + (SHOpower * 100) + "%.");
+            mes = "Downshifted to " + (SHOpower * 100) + "%.";
+            shift = true;
 
         } else if (downshift && SHOpower == 0.7) {
-            telemetry.addData("Shooter System - SHPower", "Warning! Power has already been set to minimum!");
+            mes = "Warning! Power has already been set to minimum!";
 
         }
+        timer3.startTime();
+        timer3.reset();
 
-        while (timer3.seconds() <= 0.5) {
+        while (timer3.seconds() <= 0.5 && shift) {
             telemetry.update();
 
         }
+
+        if (!mes.equals("n/a")) {
+            telemetry.addData(cap, mes);
+
+        }
+
         telemetry.update();
 
     }
