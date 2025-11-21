@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -28,8 +29,8 @@ public class mainOp extends LinearOpMode {
 
     // Shooter System Variables
     DcMotor SM;
-    DcMotor IM1;
-    DcMotor IM2;
+    CRServo IS1;
+
     int pwrPercentage = 100; // The percentage that the intake motor will spin at
     double SHOpower = (double) pwrPercentage / 100;
     ElapsedTime timer1 = new ElapsedTime();
@@ -38,7 +39,7 @@ public class mainOp extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        cameraInit();
+        //cameraInit();
         mecanumDriveSystemInit();
         shooterSystemInit();
 
@@ -46,25 +47,9 @@ public class mainOp extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-
-                drive(gamepad1.left_stick_y, gamepad1.right_stick_x * -1, gamepad1.left_stick_x * -1);
-
-                if (aprilTag.getDetections() != null && !aprilTag.getDetections().isEmpty()) {
-                    telemetry.addData("Tag IDs", aprilTag.getDetections().stream()
-                            .map(d -> d.id)
-                            .collect(Collectors.toList()).toString());
-                } else {
-                    telemetry.addLine("No tags detected");
-                }
-                telemetry.update();
-
-                loader(gamepad1.x);
-                shooter(gamepad1.a, gamepad1.y, gamepad1.b, gamepad1.right_bumper);
-                SHPower(gamepad1.dpad_left, gamepad1.dpad_right);
-
-                streamSwitch(gamepad1.dpad_up, gamepad1.dpad_down);
-
+                looper();
                 sleep(20);
+
             }
         }
 
@@ -112,15 +97,36 @@ public class mainOp extends LinearOpMode {
     public void shooterSystemInit() {
         // Mapping out the locations of the motors on the Control Hub
         SM = hardwareMap.get(DcMotor.class, "ShootingMotor");
-        IM1 = hardwareMap.get(DcMotor.class, "IntakeMotor1");
-        IM2 = hardwareMap.get(DcMotor.class, "IntakeMotor2");
-
-        // Intake Motor 1 is always going to be on
-        IM1.setPower(SHOpower);
+        IS1 = hardwareMap.get(CRServo.class, "IntakeServo1");
 
         // Telemetry on the console that will verify that the activation process
         telemetry.addData("Shooter System", "The activation process is now complete!");
         telemetry.update();
+
+    }
+
+    public void looper() {
+        drive(gamepad1.left_stick_y, gamepad1.right_stick_x * -1, gamepad1.left_stick_x * -1);
+
+        /*
+        //Check April Tags
+        if (aprilTag.getDetections() != null && !aprilTag.getDetections().isEmpty()) {
+            telemetry.addData("Tag IDs", aprilTag.getDetections().stream()
+                    .map(d -> d.id)
+                    .collect(Collectors.toList()).toString());
+        } else {
+            telemetry.addLine("No tags detected");
+        }
+        telemetry.update();
+        */
+        if (gamepad1.x) {
+            telemetry.addData("str blah", "Button X Pressed - LOADING");
+            loader(gamepad1.x);
+        }
+        shooter(gamepad1.a);
+        //SHPower(gamepad1.dpad_left, gamepad1.dpad_right);
+
+        //streamSwitch(gamepad1.dpad_up, gamepad1.dpad_down);
 
     }
 
@@ -133,53 +139,47 @@ public class mainOp extends LinearOpMode {
 
     }
 
-    public void loader(boolean LOAbutton) {
+    public void loader(boolean LOAbuttonPos) {
+        String cap = "Shooter System - Loader";
         timer1.reset();
         timer1.startTime();
+        if (LOAbuttonPos) {
+            IS1.setPower(-1);
 
-        if (LOAbutton) {
-            IM2.setPower(SHOpower);
-            while (timer1.seconds() <= 1) {
-                telemetry.addLine("loading...");
-                telemetry.update();
-
-                drive(gamepad1.left_stick_y, gamepad1.left_stick_x * -1, gamepad1.right_stick_x * -1);
-
+            while (timer1.seconds() <= 3) {
+                telemetry.addData(cap, "****** -1 Power");
             }
-            telemetry.addData("Loader", "The loader has completed all steps!");
+                //looper();
+
+            IS1.setPower(1);
+
+            while (timer1.seconds() <= 6) {
+                telemetry.addData(cap, "----- +1 Power");
+            }
+
+            telemetry.addData(cap, "The loader has completed all steps to load!");
             telemetry.update();
-
-        }
-        else {
-            IM2.setPower(0);
-
         }
 
     }
 
-    public void shooter(boolean SHObutton, boolean SHObutton70, boolean SHObutton80, boolean SHObutton90) {
+    public void shooter(boolean SHObutton) {
         timer2.reset();
         timer2.startTime();
 
         if (SHObutton) {
             SM.setPower(SHOpower);
-        } else if (SHObutton70) {
-            SM.setPower(0.7);
-        } else if (SHObutton80) {
-            SM.setPower(0.8);
-        } else if (SHObutton90) {
-            SM.setPower(0.9);
-        } else {
-            SM.setPower(0);
-        }
-
-        if (SHObutton || SHObutton70 || SHObutton80 || SHObutton90) {
             while (timer2.seconds() <= 1) {
                 telemetry.addLine("Shooting...");
                 telemetry.update();
+               // looper();
+
             }
             telemetry.addData("Shooter System - Shooter", "The shooter has completed all steps!");
             telemetry.update();
+
+        } else {
+            SM.setPower(0);
 
         }
 
@@ -222,18 +222,14 @@ public class mainOp extends LinearOpMode {
         }
 
         while (timer3.seconds() <= 0.5 && shift) {
+            drive(gamepad1.left_stick_y, gamepad1.right_stick_x * -1, gamepad1.left_stick_x * -1);
             telemetry.addData(cap, "Shifting... " + timer3.seconds());
             telemetry.update();
-
         }
-
-
         if (!mes.equals("n/a")) {
             telemetry.addData(cap, mes);
-
         }
         telemetry.update();
-
     }
 
     public static void drive(double thrust, double turn, double strafe) {
@@ -250,8 +246,6 @@ public class mainOp extends LinearOpMode {
         FRight.setPower(maxSpeed * FRightPower);
         BLeft.setPower(maxSpeed * BLeftPower);
         BRight.setPower(maxSpeed * BRightPower);
-
     }
-
 
 }

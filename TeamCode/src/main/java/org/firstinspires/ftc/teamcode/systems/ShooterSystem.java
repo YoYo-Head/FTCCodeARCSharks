@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.systems;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -12,11 +10,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @TeleOp(name="Shooting & Intake System")
-public class ShooterSystem extends OpMode {
+public class ShooterSystem extends LinearOpMode {
     DcMotor SM;
     CRServo IS1;
-    CRServo IS2;
-
+    //CRServo IS2;
 
     ElapsedTime timer1 = new ElapsedTime();
     ElapsedTime timer2 = new ElapsedTime();
@@ -29,26 +26,44 @@ public class ShooterSystem extends OpMode {
     int pwrPercentage = 100; // For shooting power
     double SHOpower = (double) pwrPercentage / 100;
 
-    @Override
-    public void init() {
+    public void ShooterInit() {
         // Mapping out the locations of the motors on the Control Hub
         SM = hardwareMap.get(DcMotor.class, "ShootingMotor");
         IS1 = hardwareMap.get(CRServo.class, "IntakeServo1");
-        IS2 = hardwareMap.get(CRServo.class, "IntakeServo2");
+        //IS2 = hardwareMap.get(CRServo.class, "IntakeServo2");
 
-        IS1.setDirection(CRServo.Direction.REVERSE);
-        IS2.setDirection(CRServo.Direction.REVERSE);
+        IS1.setPower(0);
+        //IS2.setPower(0);
 
     }
 
     @Override
-    public void loop() {
-        // If using this OpMode, this is where the inputs will be taken
-        loader(gamepad1.a);
-        shooter(gamepad1.x, gamepad1.y, gamepad1.b, gamepad1.right_bumper);
-        SHPower(gamepad1.dpad_left, gamepad1.dpad_right);
+    public void runOpMode() {
+        ShooterInit();
+
+        waitForStart();
+
+        if (opModeIsActive()) {
+            while (opModeIsActive()) {
+                // If using this OpMode, this is where the inputs will be taken
+                //looper();
+                loader(gamepad1.a);
+                shooter(gamepad1.x);
+                //SHPower(gamepad1.dpad_left, gamepad1.dpad_right);
+
+
+            }
+
+        }
 
     }
+
+    /*
+    public void looper() {
+
+
+    }
+     */
 
     private static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
@@ -59,50 +74,49 @@ public class ShooterSystem extends OpMode {
     }
 
     // Defining the function of the loader
-    public void loader(boolean LOAbutton) {
-        if (LOAbutton) {
+    public void loader(boolean LOAbuttonPos) {
+        String cap = "Shooter System - Loader";
+        timer1.reset();
+        timer1.startTime();
+        if (LOAbuttonPos) {
             IS1.setPower(1);
-            IS2.setPower(1);
-            telemetry.addData("Loader", "The loader has completed all steps!");
+
+            while (timer1.seconds() <= 0.5)
+                telemetry.addData(cap, "loading... " + timer1.seconds());
+
+            IS1.setPower(-1);
+
+            telemetry.addData(cap, "The loader has completed all steps to load!");
             telemetry.update();
 
-        } /* else {
-            IS1.setPower(0);
-            IS2.setPower(0);
-
-        } */
+        }
 
     }
 
     // Defining the function of the shooter
-    public void shooter(boolean SHObutton, boolean SHObutton70, boolean SHObutton80, boolean SHObutton90) {
+    public void shooter(boolean SHObutton) {
         timer2.reset();
         timer2.startTime();
 
         if (SHObutton) {
             SM.setPower(SHOpower);
-        } else if (SHObutton70) {
-            SM.setPower(0.7);
-        } else if (SHObutton80) {
-            SM.setPower(0.8);
-        } else if (SHObutton90) {
-            SM.setPower(0.9);
-        } else {
-            SM.setPower(0);
-        }
-
-        if (SHObutton || SHObutton70 || SHObutton80 || SHObutton90) {
             while (timer2.seconds() <= 1) {
                 telemetry.addLine("Shooting...");
                 telemetry.update();
+                //looper();
+
             }
             telemetry.addData("Shooter System - Shooter", "The shooter has completed all steps!");
             telemetry.update();
+
+        } else {
+            SM.setPower(0);
 
         }
 
     }
 
+    /*
     public void SHPower(boolean upshift, boolean downshift) {
         // 5% upshift, 5% downshift
         // Will stop at 100%
@@ -134,6 +148,7 @@ public class ShooterSystem extends OpMode {
         while (timer3.seconds() <= 0.5 && shift) {
             telemetry.addData(cap, "Shifting... " + timer3.seconds());
             telemetry.update();
+            looper();
 
         }
 
@@ -144,5 +159,6 @@ public class ShooterSystem extends OpMode {
         telemetry.update();
 
     }
-
+*/
 }
+
