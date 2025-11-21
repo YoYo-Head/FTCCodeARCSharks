@@ -84,7 +84,7 @@ public class ShooterSystem extends OpMode {
 
         if (SHObutton || SHObutton30 || SHObutton50 || SHObutton70) {
             while (timer2.seconds() <= 1) {
-                telemetry.addLine("shooting...");
+                telemetry.addLine("loading...");
                 telemetry.update();
             }
             telemetry.addData("Shooter", "The shooter has completed all steps!");
@@ -101,14 +101,14 @@ public class ShooterSystem extends OpMode {
             telemetry.addData("Shooter System - SHPower", "Upshifted to " + (SHOpower * 100) + "%.");
 
         } else if (upshift && SHOpower == 1) {
-            telemetry.addData("Shooter System - SHPower", "Warning! Power has already been set to maximum" + (SHOpower * 100) + "%!");
+            telemetry.addData("Shooter System - SHPower", "Warning! Power has already been set to max!");
 
         } else if (downshift && SHOpower > 0.7) {
             SHOpower = SHOpower - 0.05;
             telemetry.addData("Shooter System - SHPower", "Downshifted to " + (SHOpower * 100) + "%.");
 
         } else if (downshift && SHOpower == 0.7) {
-            telemetry.addData("Shooter System - SHPower", "Warning! Power has already been set to minimum " + (SHOpower * 100) + "%!");
+            telemetry.addData("Shooter System - SHPower", "Warning! Power has already been set to minimum!");
 
         }
 
