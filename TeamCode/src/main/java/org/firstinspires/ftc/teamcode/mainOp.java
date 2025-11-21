@@ -43,7 +43,7 @@ public class mainOp extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
-                drive(gamepad1.left_stick_y, gamepad1.left_stick_x * -1, gamepad1.right_stick_x * -1);
+                drive(gamepad1.left_stick_y, gamepad1.right_stick_x * -1, gamepad1.left_stick_x * -1);
 
                 if (aprilTag.getDetections() != null && !aprilTag.getDetections().isEmpty()) {
                     telemetry.addData("Tag IDs", aprilTag.getDetections().stream()
