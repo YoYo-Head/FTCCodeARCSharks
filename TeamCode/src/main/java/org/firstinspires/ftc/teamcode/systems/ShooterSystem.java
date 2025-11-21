@@ -15,9 +15,6 @@ public class ShooterSystem extends OpMode {
     ElapsedTime timer2 = new ElapsedTime();
     ElapsedTime timer3 = new ElapsedTime();
 
-    // Shifter Specific Variables
-    boolean shift = false;
-
 
 
     // The intake speed power percentage
@@ -87,7 +84,7 @@ public class ShooterSystem extends OpMode {
 
         if (SHObutton || SHObutton30 || SHObutton50 || SHObutton70) {
             while (timer2.seconds() <= 1) {
-                telemetry.addLine("loading...");
+                telemetry.addLine("shooting...");
                 telemetry.update();
             }
             telemetry.addData("Shooter", "The shooter has completed all steps!");
@@ -99,39 +96,26 @@ public class ShooterSystem extends OpMode {
     public void SHPower(boolean upshift, boolean downshift) {
         // 5% upshift, 5% downshift
         // Will stop at 100%
-        String cap = "Shooter System - SHPower";
-        String mes = "n/a";
-
         if (upshift && SHOpower < 1) {
             SHOpower = SHOpower + 0.05;
-            mes = "Upshifted to " + (SHOpower * 100) + "%.";
-            shift = true;
+            telemetry.addData("Shooter System - SHPower", "Upshifted to " + (SHOpower * 100) + "%.");
 
         } else if (upshift && SHOpower == 1) {
-            mes = "Warning! Power has already been set to max!";
+            telemetry.addData("Shooter System - SHPower", "Warning! Power has already been set to maximum" + (SHOpower * 100) + "%!");
 
         } else if (downshift && SHOpower > 0.7) {
             SHOpower = SHOpower - 0.05;
-            mes = "Downshifted to " + (SHOpower * 100) + "%.";
-            shift = true;
+            telemetry.addData("Shooter System - SHPower", "Downshifted to " + (SHOpower * 100) + "%.");
 
         } else if (downshift && SHOpower == 0.7) {
-            mes = "Warning! Power has already been set to minimum!";
+            telemetry.addData("Shooter System - SHPower", "Warning! Power has already been set to minimum " + (SHOpower * 100) + "%!");
 
         }
-        timer3.startTime();
-        timer3.reset();
 
-        while (timer3.seconds() <= 0.5 && shift) {
+        while (timer3.seconds() <= 0.5) {
             telemetry.update();
 
         }
-
-        if (!mes.equals("n/a")) {
-            telemetry.addData(cap, mes);
-
-        }
-
         telemetry.update();
 
     }
