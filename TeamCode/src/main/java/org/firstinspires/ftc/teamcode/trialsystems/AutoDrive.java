@@ -19,7 +19,7 @@ public class AutoDrive extends LinearOpMode {
     // AutoDrive Math Variables
     static final double COUNTS_PER_MOTOR_REV = 1425; // Not final, pls verify by checking the motor label.
     static final double EXTERNAL_OUTPUT_GEAR_RATIO = 1; // No change as gear ratio is maintained
-    static final double WHEEL_DIAMETER = 7; // In cm. Not final, pls verify by measuring diameter of wheel
+    static final double WHEEL_DIAMETER = 14.5; // In cm. Not final, pls verify by measuring diameter of wheel
     static final double COUNTS_PER_CENTIMETRE = (COUNTS_PER_MOTOR_REV * EXTERNAL_OUTPUT_GEAR_RATIO) / (WHEEL_DIAMETER * 3.1415);
 
     // Speed variables
@@ -53,16 +53,14 @@ public class AutoDrive extends LinearOpMode {
         telemetry.addData("Starting at",  "%7d :%7d :%7d :%7d",
                 FLeft.getCurrentPosition(),
                 FRight.getCurrentPosition(),
-                BLeft.getCurrentPosition(),
-                BRight.getCurrentPosition());
+ m,                 BRight.getCurrentPosition());
         telemetry.update();
 
         // Wait for the game to start (driver presses START)
         waitForStart();
 
         // Commands space
-        encoderThrustDrive(DRIVE_SPEED, 0.5, 4);
-
+        encoderThrustDrive(-DRIVE_SPEED, 67, 4);
 
         // Ending telemetry
         telemetry.addData("Path", "Complete");
@@ -88,6 +86,8 @@ public class AutoDrive extends LinearOpMode {
             FRight.setTargetPosition(newTargetFR);
             BLeft.setTargetPosition(newTargetBL);
             BRight.setTargetPosition(newTargetBR);
+            BRight.setDirection(DcMotor.Direction.REVERSE);
+
 
             // Turn On RUN_TO_POSITION
             FLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -97,19 +97,19 @@ public class AutoDrive extends LinearOpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            FLeft.setPower(Math.abs(speed));
-            FRight.setPower(Math.abs(speed));
-            BLeft.setPower(Math.abs(speed));
-            BRight.setPower(Math.abs(speed));
+            FLeft.setPower(speed);
+            FRight.setPower(speed);
+            BLeft.setPower(speed);
+            BRight.setPower(speed);
 
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
                     (FLeft.isBusy() && FRight.isBusy() && BLeft.isBusy() && BRight.isBusy())) {
 
                 // Display it for the driver.
-                telemetry.addData("Running to",  " %7d :%7d :%7d :%7d", newTargetFL, newTargetFR, newTargetBL, newTargetBR);
-                telemetry.addData("Currently at",  " at %7d :%7d :%7d :%7d",
-                        FLeft.getCurrentPosition(), FRight.getCurrentPosition(), BLeft.getCurrentPosition(), BRight.getCurrentPosition());
+                telemetry.addData("Running to",  " %7d", newTargetFL);
+                telemetry.addData("Currently at",  " at %7d",
+                        FLeft.getCurrentPosition());
                 telemetry.update();
             }
             // Stop all motion;
@@ -127,6 +127,20 @@ public class AutoDrive extends LinearOpMode {
             sleep(250);   // optional pause after each move.
 
         }
+
+    }
+
+    public void encoderTurnDrive() {
+        int newTargetFL;
+        int newTargetFR;
+        int newTargetBL;
+        int newTargetBR;
+
+        if (opModeIsActive()) {
+
+
+        }
+
 
     }
 

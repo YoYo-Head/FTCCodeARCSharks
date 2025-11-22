@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @TeleOp(name="Camera")
 public class CameraView extends LinearOpMode {
     // Creating the camera
-    WebcamName camera;
+    static WebcamName camera;
 
     // Creating camera feed
     VisionPortal vision;

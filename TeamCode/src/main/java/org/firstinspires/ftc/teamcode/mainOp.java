@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -29,9 +29,9 @@ public class mainOp extends LinearOpMode {
 
     // Shooter System Variables
     DcMotor SM;
-    CRServo IS1;
+    Servo IS1;
 
-    int pwrPercentage = 100; // The percentage that the intake motor will spin at
+    int pwrPercentage = 95; // The percentage that the intake motor will spin at
     double SHOpower = (double) pwrPercentage / 100;
     ElapsedTime timer1 = new ElapsedTime();
     ElapsedTime timer2 = new ElapsedTime();
@@ -39,7 +39,7 @@ public class mainOp extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        //cameraInit();
+        cameraInit();
         mecanumDriveSystemInit();
         shooterSystemInit();
 
@@ -47,10 +47,28 @@ public class mainOp extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                looper();
+                drive(gamepad1.left_stick_y, gamepad1.right_stick_x * -1 / 2, gamepad1.left_stick_x * -1);
+
+
+                //Check April Tags
+                if (aprilTag.getDetections() != null && !aprilTag.getDetections().isEmpty()) {
+                    telemetry.addData("Tag IDs", aprilTag.getDetections().stream()
+                            .map(d -> d.id)
+                            .collect(Collectors.toList()).toString());
+                } else {
+                    telemetry.addLine("No tags detected");
+                }
+                telemetry.update();
+
+                loader(gamepad1.left_bumper);
+                shooter(gamepad1.a, gamepad1.y);
+                SHPower(gamepad1.dpad_left, gamepad1.dpad_right);
+
+                streamSwitch(gamepad1.dpad_up, gamepad1.dpad_down);
                 sleep(20);
 
             }
+
         }
 
     }
@@ -85,7 +103,7 @@ public class mainOp extends LinearOpMode {
         BLeft = hardwareMap.get(DcMotor.class, "Motor2");
         BRight = hardwareMap.get(DcMotor.class, "Motor3");
 
-        //Inverting motors as they are opposite
+        // Inverting motors as they are opposite
         BRight.setDirection(DcMotor.Direction.REVERSE);
 
         // Telemetry on the console that will verify that the activation process
@@ -97,7 +115,7 @@ public class mainOp extends LinearOpMode {
     public void shooterSystemInit() {
         // Mapping out the locations of the motors on the Control Hub
         SM = hardwareMap.get(DcMotor.class, "ShootingMotor");
-        IS1 = hardwareMap.get(CRServo.class, "IntakeServo1");
+        IS1 = hardwareMap.get(Servo.class, "IntakeServo1");
 
         // Telemetry on the console that will verify that the activation process
         telemetry.addData("Shooter System", "The activation process is now complete!");
@@ -106,9 +124,8 @@ public class mainOp extends LinearOpMode {
     }
 
     public void looper() {
-        drive(gamepad1.left_stick_y, gamepad1.right_stick_x * -1, gamepad1.left_stick_x * -1);
+        drive(gamepad1.left_stick_y, gamepad1.right_stick_x * -1 / 2, gamepad1.left_stick_x * -1);
 
-        /*
         //Check April Tags
         if (aprilTag.getDetections() != null && !aprilTag.getDetections().isEmpty()) {
             telemetry.addData("Tag IDs", aprilTag.getDetections().stream()
@@ -117,16 +134,10 @@ public class mainOp extends LinearOpMode {
         } else {
             telemetry.addLine("No tags detected");
         }
+        telemetry.addLine("Shooter Power set to " + SHOpower + "?");
         telemetry.update();
-        */
-        if (gamepad1.x) {
-            telemetry.addData("str blah", "Button X Pressed - LOADING");
-            loader(gamepad1.x);
-        }
-        shooter(gamepad1.a);
-        //SHPower(gamepad1.dpad_left, gamepad1.dpad_right);
 
-        //streamSwitch(gamepad1.dpad_up, gamepad1.dpad_down);
+        loader(gamepad1.left_bumper);
 
     }
 
@@ -144,26 +155,21 @@ public class mainOp extends LinearOpMode {
         timer1.reset();
         timer1.startTime();
         if (LOAbuttonPos) {
-            IS1.setPower(-1);
+            IS1.setPosition(0.75);
 
-            while (timer1.seconds() <= 3) {
-                telemetry.addData(cap, "****** -1 Power");
-            }
-                //looper();
+            while (timer1.seconds() <= 0.3)
+                telemetry.addData(cap, "loading... " + timer1.seconds());
 
-            IS1.setPower(1);
-
-            while (timer1.seconds() <= 6) {
-                telemetry.addData(cap, "----- +1 Power");
-            }
+            IS1.setPosition(-1);
 
             telemetry.addData(cap, "The loader has completed all steps to load!");
             telemetry.update();
+
         }
 
     }
 
-    public void shooter(boolean SHObutton) {
+    public void shooter(boolean SHObutton, boolean SHObutton70) {
         timer2.reset();
         timer2.startTime();
 
@@ -172,7 +178,18 @@ public class mainOp extends LinearOpMode {
             while (timer2.seconds() <= 1) {
                 telemetry.addLine("Shooting...");
                 telemetry.update();
-               // looper();
+                looper();
+
+            }
+            telemetry.addData("Shooter System - Shooter", "The shooter has completed all steps!");
+            telemetry.update();
+
+        }  else if (SHObutton70) {
+            SM.setPower(0.8);
+            while (timer2.seconds() <= 1) {
+                telemetry.addLine("Shooting...");
+                telemetry.update();
+                looper();
 
             }
             telemetry.addData("Shooter System - Shooter", "The shooter has completed all steps!");
